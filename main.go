@@ -35,15 +35,12 @@ func main() {
 			params := toMap(txt.String())
 
 			mid, e := strconv.ParseUint(params["id"], 10, 0)
-
 			if e != nil {
 				log.Println("parse MID error: ", e.Error())
 			}
 
 			log.Println(mid)
-
 			log.Println(messages)
-
 		}
 	}
 
