@@ -9,7 +9,7 @@ import (
 	"github.com/fiorix/go-smpp/smpp/pdu/pdufield"
 )
 
-func NewSMPPConnector() {
+func NewSMPPConnector(addr, user, password string) {
 
 	f := func(p pdu.Body) {
 		switch p.Header().ID {
@@ -32,9 +32,9 @@ func NewSMPPConnector() {
 	}
 
 	tx := &smpp.Transceiver{
-		Addr:    "192.168.0.2:3736",
-		User:    "user",
-		Passwd:  "password",
+		Addr:    addr,
+		User:    user,
+		Passwd:  password,
 		Handler: f,
 	}
 
