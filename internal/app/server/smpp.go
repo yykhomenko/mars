@@ -3,6 +3,8 @@ package server
 import (
 	"log"
 	"strconv"
+	"strings"
+	"unicode"
 
 	"github.com/fiorix/go-smpp/smpp"
 	"github.com/fiorix/go-smpp/smpp/pdu"
@@ -51,5 +53,38 @@ func NewSMPPConnector(addr, user, password string) {
 			}
 		}
 	}()
+}
 
+func toMap(text string) map[string]string {
+
+	var m map[string]string
+	var ss []string
+
+	ss = strings.Split(text, " ")
+	m = make(map[string]string)
+
+	for _, pair := range ss {
+		z := strings.Split(pair, ":")
+		if len(z) == 2 {
+			m[z[0]] = z[1]
+		}
+	}
+
+	return m
+}
+
+func getTON(s string) uint8 {
+	if isLetter(s) {
+		return 0x05
+	}
+	return 0
+}
+
+func isLetter(s string) bool {
+	for _, r := range s {
+		if !unicode.IsLetter(r) {
+			return false
+		}
+	}
+	return true
 }
