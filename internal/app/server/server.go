@@ -7,14 +7,9 @@ import (
 	"time"
 )
 
-func main() {
-
-	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
-
+func NewHttpServer(addr string) error {
 	http.HandleFunc("/messages", messages())
-
-	log.Println("up")
-	log.Fatal(http.ListenAndServe(":8027", nil))
+	return http.ListenAndServe(addr, nil)
 }
 
 func messages() http.HandlerFunc {
