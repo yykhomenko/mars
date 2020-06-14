@@ -48,7 +48,7 @@ func main() {
 
 	tx := &smpp.Transceiver{
 		Addr:        "192.168.0.2:3736",
-		User:        "esme36",
+		User:        "user",
 		Passwd:      "password",
 		Handler:     f,
 		RateLimiter: lm,
@@ -57,7 +57,7 @@ func main() {
 	conn := tx.Bind()
 	go func() {
 		for c := range conn {
-			log.Println("SMPP connection status:", c.Status())
+			log.Println("SMPP connection status:", c.Status(), c.Error())
 		}
 	}()
 
@@ -82,9 +82,13 @@ func root(tx *smpp.Transceiver) func(w http.ResponseWriter, r *http.Request) {
 
 		start := time.Now()
 
-		src := r.FormValue("src")
-		dst := r.FormValue("dst")
-		text := r.FormValue("text")
+		// src := r.FormValue("src")
+		// dst := r.FormValue("dst")
+		// text := r.FormValue("text")
+
+		src := "777"
+		dst := "380671112222"
+		text := "hello"
 
 		message := &smpp.ShortMessage{
 			Src:           src,
@@ -114,7 +118,7 @@ func root(tx *smpp.Transceiver) func(w http.ResponseWriter, r *http.Request) {
 			log.Println("parse MID error: ", e.Error())
 		}
 
-		log.Println(mid)
+		log.Println("mid:", mid)
 
 		_, _ = io.WriteString(w, midStr)
 
