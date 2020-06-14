@@ -8,6 +8,7 @@ import (
 )
 
 func NewHttpServer(addr string) error {
+	log.Println("http server listen:", addr)
 	http.HandleFunc("/messages", messages())
 	return http.ListenAndServe(addr, nil)
 }

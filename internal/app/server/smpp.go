@@ -13,31 +13,11 @@ import (
 
 func NewSMPPConnector(addr, user, password string) {
 
-	f := func(p pdu.Body) {
-		switch p.Header().ID {
-		case pdu.DeliverSMID:
-			f := p.Fields()
-			src := f[pdufield.SourceAddr]
-			dst := f[pdufield.DestinationAddr]
-			txt := f[pdufield.ShortMessage]
-			log.Printf("Short message from=%q to=%q: %q", src, dst, txt)
-
-			params := toMap(txt.String())
-
-			mid, e := strconv.ParseUint(params["id"], 10, 0)
-			if e != nil {
-				log.Println("parse MID error: ", e.Error())
-			}
-
-			log.Println(mid)
-		}
-	}
-
 	tx := &smpp.Transceiver{
 		Addr:    addr,
 		User:    user,
 		Passwd:  password,
-		Handler: f,
+		Handler: receiverHandler,
 	}
 
 	conn := tx.Bind()
@@ -55,7 +35,27 @@ func NewSMPPConnector(addr, user, password string) {
 	}()
 }
 
-func toMap(text string) map[string]string {
+func receiverHandler(p pdu.Body) {
+	switch p.Header().ID {
+	case pdu.DeliverSMID:
+		f := p.Fields()
+		src := f[pdufield.SourceAddr]
+		dst := f[pdufield.DestinationAddr]
+		txt := f[pdufield.ShortMessage]
+		log.Printf("Short message from=%q to=%q: %q", src, dst, txt)
+
+		params := ParseTLVStatus(txt.String())
+
+		mid, e := strconv.ParseUint(params["id"], 10, 0)
+		if e != nil {
+			log.Println("parse MID error: ", e.Error())
+		}
+
+		log.Println(mid)
+	}
+}
+
+func ParseTLVStatus(text string) map[string]string {
 
 	var m map[string]string
 	var ss []string
