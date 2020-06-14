@@ -29,16 +29,6 @@ func main() {
 func root(tx *smpp.Transceiver) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		// Read body
-		b, err := ioutil.ReadAll(r.Body)
-		defer r.Body.Close()
-		if err != nil {
-			http.Error(w, err.Error(), 500)
-			return
-		}
-
-		log.Println(string(b))
-
 		start := time.Now()
 
 		src := r.FormValue("src")
