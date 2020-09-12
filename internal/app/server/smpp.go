@@ -29,8 +29,6 @@ func NewSMPPConnector(addr, user, password string) {
 				if err := tx.Close(); err != nil {
 					log.Println("error close tx:", err)
 				}
-				// log.Println("try rebind")
-				// conn = tx.Bind() // todo check for leaks
 			}
 		}
 	}()
@@ -45,7 +43,7 @@ func receiverHandler(p pdu.Body) {
 		txt := f[pdufield.ShortMessage]
 		log.Printf("Short message from=%q to=%q: %q", src, dst, txt)
 
-		params := ParseTLVStatus(txt.String())
+		params := parseTLVStatus(txt.String())
 
 		mid, e := strconv.ParseUint(params["id"], 10, 0)
 		if e != nil {
@@ -56,7 +54,7 @@ func receiverHandler(p pdu.Body) {
 	}
 }
 
-func ParseTLVStatus(text string) map[string]string {
+func parseTLVStatus(text string) map[string]string {
 	var m map[string]string
 	var ss []string
 
