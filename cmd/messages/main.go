@@ -12,6 +12,6 @@ func main() {
 	r := router.New()
 
 	// server.NewSMPPConnector("192.168.0.2:3736", "user", "password")
-	s := server.New(":8027", r)
+	s := server.NewHTTPConnector(":8027", r)
 	s.Start()
 }

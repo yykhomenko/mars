@@ -12,13 +12,13 @@ import (
 	"github.com/cbi-sh/messages/internal/app/router"
 )
 
-type HttpConnector struct {
+type HTTPConnector struct {
 	addr   string
 	router *router.Router
 }
 
-func New(addr string, router *router.Router) *HttpConnector {
-	s := &HttpConnector{
+func NewHTTPConnector(addr string, router *router.Router) *HTTPConnector {
+	s := &HTTPConnector{
 		addr:   addr,
 		router: router,
 	}
@@ -28,12 +28,12 @@ func New(addr string, router *router.Router) *HttpConnector {
 	return s
 }
 
-func (c *HttpConnector) Start() error {
+func (c *HTTPConnector) Start() error {
 	log.Println("HTTP server listen:", c.addr)
 	return http.ListenAndServe(c.addr, nil)
 }
 
-func (c *HttpConnector) configureRouter() {
+func (c *HTTPConnector) configureRouter() {
 	http.HandleFunc("/messages", messages(c.router))
 }
 
