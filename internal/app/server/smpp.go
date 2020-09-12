@@ -12,7 +12,6 @@ import (
 )
 
 func NewSMPPConnector(addr, user, password string) {
-
 	log.Println("SMPP server listen:", addr)
 
 	tx := &smpp.Transceiver{

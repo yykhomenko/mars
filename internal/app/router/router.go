@@ -1,13 +1,13 @@
 package router
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/fiorix/go-smpp/smpp"
 )
 
 type Router struct {
-	query []*smpp.ShortMessage
+	queries map[string]*smpp.ShortMessage
 }
 
 func New() *Router {
@@ -15,6 +15,6 @@ func New() *Router {
 }
 
 func (r *Router) Route(m *smpp.ShortMessage) {
-	r.query = append(r.query, m)
-	fmt.Println("message routed:", m)
+	r.queries[m.Src] = m
+	log.Println("message routed:", m)
 }
