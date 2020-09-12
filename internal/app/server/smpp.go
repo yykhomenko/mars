@@ -31,7 +31,7 @@ func NewSMPPConnector(addr, user, password string, router *router.Router) *SMPPC
 	}
 }
 
-func (c *SMPPConnector) Start() error {
+func (c *SMPPConnector) Start() {
 	c.tx = &smpp.Transceiver{
 		Addr:    c.addr,
 		User:    c.user,
@@ -58,9 +58,7 @@ func (c *SMPPConnector) Start() error {
 		}
 	}()
 
-	log.Println("SMPP server listen:", c.addr)
-
-	return nil
+	log.Println("SMPPConnector listen:", c.addr)
 }
 
 func receiverHandler(r *router.Router) smpp.HandlerFunc {
