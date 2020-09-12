@@ -9,29 +9,50 @@ import (
 	"github.com/fiorix/go-smpp/smpp"
 	"github.com/fiorix/go-smpp/smpp/pdu"
 	"github.com/fiorix/go-smpp/smpp/pdu/pdufield"
+
+	"github.com/cbi-sh/messages/internal/app/router"
 )
 
-func NewSMPPConnector(addr, user, password string) {
-	log.Println("SMPP server listen:", addr)
+type SMPPConnector struct {
+	addr     string
+	user     string
+	password string
+	tx       *smpp.Transceiver
+	router   *router.Router
+}
 
-	tx := &smpp.Transceiver{
-		Addr:    addr,
-		User:    user,
-		Passwd:  password,
+func NewSMPPConnector(addr, user, password string, router *router.Router) *SMPPConnector {
+	return &SMPPConnector{
+		addr:     addr,
+		user:     user,
+		password: password,
+		router:   router,
+	}
+}
+
+func (c *SMPPConnector) Start() error {
+	c.tx = &smpp.Transceiver{
+		Addr:    c.addr,
+		User:    c.user,
+		Passwd:  c.password,
 		Handler: receiverHandler,
 	}
 
-	conn := tx.Bind()
+	statuses := c.tx.Bind()
 	go func() {
-		for c := range conn {
-			log.Println("SMPP connection status:", c.Status(), c.Error())
-			if c.Status() == smpp.Disconnected {
-				if err := tx.Close(); err != nil {
+		for s := range statuses {
+			log.Println("SMPP connection status:", s.Status(), s.Error())
+			if s.Status() == smpp.Disconnected {
+				if err := c.tx.Close(); err != nil {
 					log.Println("error close tx:", err)
 				}
 			}
 		}
 	}()
+
+	log.Println("SMPP server listen:", c.addr)
+
+	return nil
 }
 
 func receiverHandler(p pdu.Body) {

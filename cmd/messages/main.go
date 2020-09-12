@@ -11,7 +11,8 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
 	r := router.New()
 
-	// server.NewSMPPConnector("192.168.0.2:3736", "user", "password")
-	s := server.NewHTTPConnector(":8027", r)
-	s.Start()
+	smpp := server.NewSMPPConnector("192.168.0.2:3736", "user", "password", r)
+	smpp.Start()
+	http := server.NewHTTPConnector(":8027", r)
+	http.Start()
 }
