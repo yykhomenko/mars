@@ -9,6 +9,7 @@ import (
 	"github.com/fiorix/go-smpp/smpp"
 	"github.com/fiorix/go-smpp/smpp/pdu"
 	"github.com/fiorix/go-smpp/smpp/pdu/pdufield"
+	"github.com/fiorix/go-smpp/smpp/pdu/pdutext"
 
 	"github.com/cbi-sh/messages/internal/app/router"
 )
@@ -35,17 +36,24 @@ func (c *SMPPConnector) Start() error {
 		Addr:    c.addr,
 		User:    c.user,
 		Passwd:  c.password,
-		Handler: receiverHandler,
+		Handler: receiverHandler(c.router),
 	}
 
 	statuses := c.tx.Bind()
 	go func() {
 		for s := range statuses {
-			log.Println("SMPP connection status:", s.Status(), s.Error())
-			if s.Status() == smpp.Disconnected {
+			switch s.Status() {
+			case smpp.Connected:
+				log.Printf("smpp: tx: connected to %s", c.tx.Addr)
+			case smpp.Disconnected:
+				log.Printf("smpp: tx: disconnected from %s", c.tx.Addr)
 				if err := c.tx.Close(); err != nil {
-					log.Println("error close tx:", err)
+					log.Printf("smpp: tx: close: %v\n", err)
 				}
+			case smpp.ConnectionFailed:
+				log.Printf("smpp: tx: unable to connect: %v\n", s.Error())
+			default:
+				log.Printf("smpp: tx: %s, err: %v\n", s.Status(), s.Error())
 			}
 		}
 	}()
@@ -55,23 +63,35 @@ func (c *SMPPConnector) Start() error {
 	return nil
 }
 
-func receiverHandler(p pdu.Body) {
-	switch p.Header().ID {
-	case pdu.DeliverSMID:
-		f := p.Fields()
-		src := f[pdufield.SourceAddr]
-		dst := f[pdufield.DestinationAddr]
-		txt := f[pdufield.ShortMessage]
-		log.Printf("Short message from=%q to=%q: %q", src, dst, txt)
+func receiverHandler(r *router.Router) smpp.HandlerFunc {
+	return func(p pdu.Body) {
+		switch p.Header().ID {
+		case pdu.DeliverSMID:
+			f := p.Fields()
+			src := f[pdufield.SourceAddr].String()
+			dst := f[pdufield.DestinationAddr].String()
+			txt := f[pdufield.ShortMessage].String()
+			log.Printf("Short message from=%q to=%q: %q", src, dst, txt)
 
-		params := parseTLVStatus(txt.String())
+			params := parseTLVStatus(txt)
 
-		mid, e := strconv.ParseUint(params["id"], 10, 0)
-		if e != nil {
-			log.Println("parse MID error: ", e.Error())
+			mid, e := strconv.ParseUint(params["id"], 10, 0)
+			if e != nil {
+				log.Fatalf("mid: %v\n", e.Error())
+			}
+
+			log.Println(mid)
+
+			m := &smpp.ShortMessage{
+				Src:           src,
+				SourceAddrTON: getTON(src),
+				Dst:           dst,
+				Text:          pdutext.Raw(txt),
+				Register:      pdufield.NoDeliveryReceipt,
+			}
+
+			r.Route(m)
 		}
-
-		log.Println(mid)
 	}
 }
 
