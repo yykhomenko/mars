@@ -7,7 +7,7 @@ import (
 )
 
 type Router struct {
-	queries map[string]*smpp.ShortMessage
+	queries map[string][]*smpp.ShortMessage
 }
 
 func New() *Router {
@@ -15,6 +15,6 @@ func New() *Router {
 }
 
 func (r *Router) Route(m *smpp.ShortMessage) {
-	r.queries[m.Src] = m
+	r.queries[m.Src] = append(r.queries[m.Src], m)
 	log.Println("message routed:", m)
 }

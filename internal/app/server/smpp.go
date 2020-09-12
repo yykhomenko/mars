@@ -61,7 +61,7 @@ func (c *SMPPConnector) Start() {
 	log.Println("SMPPConnector listen:", c.addr)
 }
 
-func receiverHandler(r *router.Router) smpp.HandlerFunc {
+func receiverHandler(router *router.Router) smpp.HandlerFunc {
 	return func(p pdu.Body) {
 		switch p.Header().ID {
 		case pdu.DeliverSMID:
@@ -88,7 +88,7 @@ func receiverHandler(r *router.Router) smpp.HandlerFunc {
 				Register:      pdufield.NoDeliveryReceipt,
 			}
 
-			r.Route(m)
+			router.Route(m)
 		}
 	}
 }
