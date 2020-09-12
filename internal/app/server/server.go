@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -19,7 +18,6 @@ type HttpConnector struct {
 }
 
 func New(addr string, router *router.Router) *HttpConnector {
-	// http.HandleFunc("/messages", messages)
 	s := &HttpConnector{
 		addr:   addr,
 		router: router,
@@ -56,41 +54,8 @@ func messages(router *router.Router) http.HandlerFunc {
 			Register:      pdufield.FinalDeliveryReceipt,
 		}
 
-		fmt.Println(src, dst, text)
-
 		router.Route(m)
 
 		log.Printf("duration: %s", time.Now().Sub(start))
 	}
 }
-
-// message := &smpp.ShortMessage{
-// 	Src:           src,
-// 	SourceAddrTON: getTON(src),
-// 	Dst:           dst,
-// 	Text:          pdutext.Raw(text),
-// 	Register:      pdufield.FinalDeliveryReceipt,
-// }
-//
-// resp, e := tx.Submit(message)
-//
-// if e == smpp.ErrNotConnected {
-// 	http.Error(w, "Oops.", http.StatusServiceUnavailable)
-// 	return
-// }
-//
-// if e != nil {
-// 	http.Error(w, e.Error(), http.StatusBadRequest)
-// 	return
-// }
-//
-// midStr := resp.RespID()
-//
-// mid, e := strconv.ParseUint(midStr, 16, 0)
-// if e != nil {
-// 	log.Println("parse MID error: ", e.Error())
-// }
-//
-// log.Println("mid:", mid)
-//
-// _, _ = io.WriteString(w, midStr)
