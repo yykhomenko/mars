@@ -1,3 +1,4 @@
+// curl "http://localhost:8080/messages?src=777&dst=380671234567&txt=Hello"
 package server
 
 import (
@@ -39,23 +40,20 @@ func (c *HTTPConnector) configureRouter() {
 
 func messages(router *router.Router) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
 		start := time.Now()
-
+		r.ParseForm()
 		src := r.FormValue("src")
 		dst := r.FormValue("dst")
-		text := r.FormValue("text")
+		txt := r.FormValue("txt")
 
-		m := &smpp.ShortMessage{
+		router.Route(&smpp.ShortMessage{
 			Src:           src,
 			SourceAddrTON: getTON(src),
 			Dst:           dst,
-			Text:          pdutext.Raw(text),
+			Text:          pdutext.Raw(txt),
 			Register:      pdufield.FinalDeliveryReceipt,
-		}
+		})
 
-		router.Route(m)
-
-		log.Printf("duration: %s", time.Now().Sub(start))
+		log.Printf("http: rx: duration: %s", time.Now().Sub(start))
 	}
 }

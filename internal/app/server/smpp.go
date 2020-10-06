@@ -2,8 +2,8 @@ package server
 
 import (
 	"log"
-	"strconv"
 	"strings"
+	"time"
 	"unicode"
 
 	"github.com/fiorix/go-smpp/smpp"
@@ -65,30 +65,20 @@ func receiverHandler(router *router.Router) smpp.HandlerFunc {
 	return func(p pdu.Body) {
 		switch p.Header().ID {
 		case pdu.DeliverSMID:
-			f := p.Fields()
-			src := f[pdufield.SourceAddr].String()
-			dst := f[pdufield.DestinationAddr].String()
-			txt := f[pdufield.ShortMessage].String()
-			log.Printf("Short message from=%q to=%q: %q", src, dst, txt)
+			start := time.Now()
+			src := p.Fields()[pdufield.SourceAddr].String()
+			dst := p.Fields()[pdufield.DestinationAddr].String()
+			txt := p.Fields()[pdufield.ShortMessage].String()
 
-			params := parseTLVStatus(txt)
-
-			mid, e := strconv.ParseUint(params["id"], 10, 0)
-			if e != nil {
-				log.Fatalf("mid: %v\n", e.Error())
-			}
-
-			log.Println(mid)
-
-			m := &smpp.ShortMessage{
+			router.Route(&smpp.ShortMessage{
 				Src:           src,
 				SourceAddrTON: getTON(src),
 				Dst:           dst,
 				Text:          pdutext.Raw(txt),
 				Register:      pdufield.NoDeliveryReceipt,
-			}
+			})
 
-			router.Route(m)
+			log.Printf("smpp: rx: duration: %s", time.Now().Sub(start))
 		}
 	}
 }
@@ -147,12 +137,17 @@ func isLetter(s string) bool {
 // }
 //
 // midStr := resp.RespID()
-//
 // mid, e := strconv.ParseUint(midStr, 16, 0)
 // if e != nil {
 // 	log.Println("parse MID error: ", e.Error())
 // }
-//
+
+// params := parseTLVStatus(txt)
+// mid, e := strconv.ParseUint(params["id"], 10, 0)
+// if e != nil {
+// log.Fatalf("mid: %v\n", e.Error())
+// }
+
 // log.Println("mid:", mid)
 //
 // _, _ = io.WriteString(w, midStr)

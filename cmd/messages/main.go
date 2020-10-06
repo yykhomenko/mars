@@ -14,6 +14,6 @@ func main() {
 	smpp := server.NewSMPPConnector("192.168.0.2:3736", "user", "password", r)
 	smpp.Start()
 
-	http := server.NewHTTPConnector(":8027", r)
+	http := server.NewHTTPConnector(":8080", r)
 	http.Start()
 }
