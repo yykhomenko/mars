@@ -32,7 +32,6 @@ func (s *HTTPServer) Start() error {
 }
 
 func (s *HTTPServer) messages(w http.ResponseWriter, r *http.Request) {
-
 	start := time.Now()
 	r.ParseForm()
 	from := r.FormValue("from")
@@ -46,5 +45,4 @@ func (s *HTTPServer) messages(w http.ResponseWriter, r *http.Request) {
 	})
 
 	log.Printf("http: rx: duration: %s", time.Since(start))
-
 }
