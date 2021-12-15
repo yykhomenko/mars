@@ -12,7 +12,7 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
 	r := router.NewRouter()
 
-	smpp := smpp.NewSMPPConnector("192.168.0.2:3736", "user", "password", r)
+	smpp := smpp.NewSMPPConnector("localhost:3736", "user", "password", r)
 	smpp.Start()
 
 	http := http.NewHTTPServer(":8080", r)
