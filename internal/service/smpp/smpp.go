@@ -1,4 +1,4 @@
-package server
+package smpp
 
 import (
 	"log"
@@ -11,7 +11,7 @@ import (
 	"github.com/fiorix/go-smpp/smpp/pdu/pdufield"
 	"github.com/fiorix/go-smpp/smpp/pdu/pdutext"
 
-	"github.com/yykhomenko/mars/internal/app/router"
+	"github.com/yykhomenko/mars/internal/service/router"
 )
 
 type SMPPConnector struct {

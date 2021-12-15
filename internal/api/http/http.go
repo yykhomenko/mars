@@ -1,5 +1,5 @@
 // curl "http://localhost:8080/messages?src=777&dst=380671234567&txt=Hello"
-package server
+package http
 
 import (
 	"log"
@@ -10,7 +10,7 @@ import (
 	"github.com/fiorix/go-smpp/smpp/pdu/pdufield"
 	"github.com/fiorix/go-smpp/smpp/pdu/pdutext"
 
-	"github.com/yykhomenko/mars/internal/app/router"
+	"github.com/yykhomenko/mars/internal/service/router"
 )
 
 type HTTPConnector struct {
