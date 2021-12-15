@@ -3,7 +3,6 @@ module github.com/yykhomenko/mars
 go 1.17
 
 require (
-	github.com/cbi-sh/messages v0.0.0-20201006230529-9fef152a29d3
 	github.com/fiorix/go-smpp v0.0.0-20210403173735-2894b96e70ba
 	github.com/stretchr/testify v1.7.0
 )
