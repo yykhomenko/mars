@@ -6,16 +6,20 @@ import (
 	"github.com/yykhomenko/mars/internal/entity"
 )
 
-type Router struct {
+type Router interface {
+	Route(m *entity.Message)
+}
+
+type router struct {
 	messages map[string][]*entity.Message
 }
 
-func New() *Router {
+func NewRouter() Router {
 	messages := make(map[string][]*entity.Message)
-	return &Router{messages: messages}
+	return &router{messages: messages}
 }
 
-func (r *Router) Route(m *entity.Message) {
+func (r *router) Route(m *entity.Message) {
 	r.messages[m.From] = append(r.messages[m.From], m)
 	log.Printf("router: message routed: %v\n", m)
 }
