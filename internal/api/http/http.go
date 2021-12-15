@@ -6,52 +6,43 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/fiorix/go-smpp/smpp"
-	"github.com/fiorix/go-smpp/smpp/pdu/pdufield"
-	"github.com/fiorix/go-smpp/smpp/pdu/pdutext"
-
+	"github.com/yykhomenko/mars/internal/entity"
 	"github.com/yykhomenko/mars/internal/service/router"
 )
 
-type HTTPConnector struct {
+type HTTPServer struct {
 	addr   string
 	router *router.Router
 }
 
-func NewHTTPConnector(addr string, router *router.Router) *HTTPConnector {
-	s := &HTTPConnector{
+func NewHTTPServer(addr string, router *router.Router) *HTTPServer {
+	s := &HTTPServer{
 		addr:   addr,
 		router: router,
 	}
 
-	s.configureRouter()
+	http.HandleFunc("/messages", messages)
 
 	return s
 }
 
-func (c *HTTPConnector) Start() error {
-	log.Println("HTTP server listen:", c.addr)
-	return http.ListenAndServe(c.addr, nil)
+func (s *HTTPServer) Start() error {
+	log.Println("HTTP server listen:", s.addr)
+	return http.ListenAndServe(s.addr, nil)
 }
 
-func (c *HTTPConnector) configureRouter() {
-	http.HandleFunc("/messages", messages(c.router))
-}
-
-func messages(router *router.Router) http.HandlerFunc {
+func messages(w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		r.ParseForm()
-		src := r.FormValue("src")
-		dst := r.FormValue("dst")
-		txt := r.FormValue("txt")
+		from := r.FormValue("from")
+		to := r.FormValue("to")
+		text := r.FormValue("text")
 
-		router.Route(&smpp.ShortMessage{
-			Src:           src,
-			SourceAddrTON: getTON(src),
-			Dst:           dst,
-			Text:          pdutext.Raw(txt),
-			Register:      pdufield.FinalDeliveryReceipt,
+		router.Route(&entity.Message{
+			From: from,
+			To:   to,
+			Text: text,
 		})
 
 		log.Printf("http: rx: duration: %s", time.Since(start))
