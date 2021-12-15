@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/cbi-sh/messages/internal/app/router"
-	"github.com/cbi-sh/messages/internal/app/server"
+	"github.com/yykhomenko/mars/internal/app/router"
+	"github.com/yykhomenko/mars/internal/app/server"
 )
 
 func main() {
