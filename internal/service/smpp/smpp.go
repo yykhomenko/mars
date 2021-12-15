@@ -14,32 +14,25 @@ import (
 )
 
 type SMPPConnector struct {
-	addr     string
-	user     string
-	password string
-	tx       *smpp.Transceiver
-	router   router.Router
+	tx     *smpp.Transceiver
+	router router.Router
 }
 
 func NewSMPPConnector(addr, user, password string, router router.Router) *SMPPConnector {
 	return &SMPPConnector{
-		addr:     addr,
-		user:     user,
-		password: password,
-		router:   router,
+		tx: &smpp.Transceiver{
+			Addr:    addr,
+			User:    user,
+			Passwd:  password,
+			Handler: receiverHandler(router),
+		},
+		router: router,
 	}
 }
 
 func (c *SMPPConnector) Start() {
-	c.tx = &smpp.Transceiver{
-		Addr:    c.addr,
-		User:    c.user,
-		Passwd:  c.password,
-		Handler: receiverHandler(c.router),
-	}
-
-	statuses := c.tx.Bind()
 	go func() {
+		statuses := c.tx.Bind()
 		for s := range statuses {
 			switch s.Status() {
 			case smpp.Connected:
@@ -57,7 +50,7 @@ func (c *SMPPConnector) Start() {
 		}
 	}()
 
-	log.Println("SMPPConnector listen:", c.addr)
+	log.Println("SMPPConnector listen:", c.tx.Addr)
 }
 
 func receiverHandler(router router.Router) smpp.HandlerFunc {
