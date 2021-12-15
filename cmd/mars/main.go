@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/yykhomenko/mars/internal/app/router"
-	"github.com/yykhomenko/mars/internal/app/server"
+	"github.com/yykhomenko/mars/internal/router"
+	"github.com/yykhomenko/mars/internal/server"
 )
 
 func main() {
