@@ -1,4 +1,4 @@
-// curl "http://localhost:8080/messages?src=777&dst=380671234567&txt=Hello"
+// curl "http://localhost:8080/messages?from=777&to=380671234567&text=Hello"
 package http
 
 import (
