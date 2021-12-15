@@ -4,13 +4,12 @@ import (
 	"log"
 	"strings"
 	"time"
-	"unicode"
 
 	"github.com/fiorix/go-smpp/smpp"
 	"github.com/fiorix/go-smpp/smpp/pdu"
 	"github.com/fiorix/go-smpp/smpp/pdu/pdufield"
-	"github.com/fiorix/go-smpp/smpp/pdu/pdutext"
 
+	"github.com/yykhomenko/mars/internal/entity"
 	"github.com/yykhomenko/mars/internal/service/router"
 )
 
@@ -66,28 +65,24 @@ func receiverHandler(router *router.Router) smpp.HandlerFunc {
 		switch p.Header().ID {
 		case pdu.DeliverSMID:
 			start := time.Now()
-			src := p.Fields()[pdufield.SourceAddr].String()
-			dst := p.Fields()[pdufield.DestinationAddr].String()
-			txt := p.Fields()[pdufield.ShortMessage].String()
+			from := p.Fields()[pdufield.SourceAddr].String()
+			to := p.Fields()[pdufield.DestinationAddr].String()
+			text := p.Fields()[pdufield.ShortMessage].String()
 
-			router.Route(&smpp.ShortMessage{
-				Src:           src,
-				SourceAddrTON: getTON(src),
-				Dst:           dst,
-				Text:          pdutext.Raw(txt),
-				Register:      pdufield.NoDeliveryReceipt,
+			router.Route(&entity.Message{
+				From: from,
+				To:   to,
+				Text: text,
 			})
 
-			log.Printf("smpp: rx: duration: %s", time.Now().Sub(start))
+			log.Printf("smpp: rx: duration: %s", time.Since(start))
 		}
 	}
 }
 
 func parseTLVStatus(text string) map[string]string {
 	var m map[string]string
-	var ss []string
-
-	ss = strings.Split(text, " ")
+	ss := strings.Split(text, " ")
 	m = make(map[string]string)
 
 	for _, pair := range ss {
@@ -99,55 +94,3 @@ func parseTLVStatus(text string) map[string]string {
 
 	return m
 }
-
-func getTON(s string) uint8 {
-	if isLetter(s) {
-		return 0x05
-	}
-	return 0
-}
-
-func isLetter(s string) bool {
-	for _, r := range s {
-		if !unicode.IsLetter(r) {
-			return false
-		}
-	}
-	return true
-}
-
-// message := &smpp.ShortMessage{
-// 	Src:           src,
-// 	SourceAddrTON: getTON(src),
-// 	Dst:           dst,
-// 	Text:          pdutext.Raw(text),
-// 	Register:      pdufield.FinalDeliveryReceipt,
-// }
-//
-// resp, e := tx.Submit(message)
-//
-// if e == smpp.ErrNotConnected {
-// 	http.Error(w, "Oops.", http.StatusServiceUnavailable)
-// 	return
-// }
-//
-// if e != nil {
-// 	http.Error(w, e.Error(), http.StatusBadRequest)
-// 	return
-// }
-//
-// midStr := resp.RespID()
-// mid, e := strconv.ParseUint(midStr, 16, 0)
-// if e != nil {
-// 	log.Println("parse MID error: ", e.Error())
-// }
-
-// params := parseTLVStatus(txt)
-// mid, e := strconv.ParseUint(params["id"], 10, 0)
-// if e != nil {
-// log.Fatalf("mid: %v\n", e.Error())
-// }
-
-// log.Println("mid:", mid)
-//
-// _, _ = io.WriteString(w, midStr)
