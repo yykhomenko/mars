@@ -12,10 +12,10 @@ import (
 
 type HTTPServer struct {
 	addr   string
-	router *router.Router
+	router router.Router
 }
 
-func NewHTTPServer(addr string, router *router.Router) *HTTPServer {
+func NewHTTPServer(addr string, router router.Router) *HTTPServer {
 	s := &HTTPServer{
 		addr:   addr,
 		router: router,

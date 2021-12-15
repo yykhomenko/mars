@@ -3,17 +3,18 @@ package main
 import (
 	"log"
 
-	"github.com/yykhomenko/mars/internal/router"
-	"github.com/yykhomenko/mars/internal/server"
+	"github.com/yykhomenko/mars/internal/api/http"
+	"github.com/yykhomenko/mars/internal/service/router"
+	"github.com/yykhomenko/mars/internal/service/smpp"
 )
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
-	r := router.New()
+	r := router.NewRouter()
 
-	smpp := server.NewSMPPConnector("192.168.0.2:3736", "user", "password", r)
+	smpp := smpp.NewSMPPConnector("192.168.0.2:3736", "user", "password", r)
 	smpp.Start()
 
-	http := server.NewHTTPConnector(":8080", r)
+	http := http.NewHTTPServer(":8080", r)
 	http.Start()
 }

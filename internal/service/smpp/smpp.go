@@ -18,10 +18,10 @@ type SMPPConnector struct {
 	user     string
 	password string
 	tx       *smpp.Transceiver
-	router   *router.Router
+	router   router.Router
 }
 
-func NewSMPPConnector(addr, user, password string, router *router.Router) *SMPPConnector {
+func NewSMPPConnector(addr, user, password string, router router.Router) *SMPPConnector {
 	return &SMPPConnector{
 		addr:     addr,
 		user:     user,
@@ -60,7 +60,7 @@ func (c *SMPPConnector) Start() {
 	log.Println("SMPPConnector listen:", c.addr)
 }
 
-func receiverHandler(router *router.Router) smpp.HandlerFunc {
+func receiverHandler(router router.Router) smpp.HandlerFunc {
 	return func(p pdu.Body) {
 		switch p.Header().ID {
 		case pdu.DeliverSMID:
