@@ -10,7 +10,7 @@ import (
 	"github.com/fiorix/go-smpp/smpp/pdu/pdufield"
 	"github.com/fiorix/go-smpp/smpp/pdu/pdutext"
 
-	"github.com/cbi-sh/messages/internal/app/router"
+	"github.com/yykhomenko/mars/internal/app/router"
 )
 
 type HTTPConnector struct {
