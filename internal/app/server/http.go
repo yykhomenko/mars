@@ -54,6 +54,6 @@ func messages(router *router.Router) http.HandlerFunc {
 			Register:      pdufield.FinalDeliveryReceipt,
 		})
 
-		log.Printf("http: rx: duration: %s", time.Now().Sub(start))
+		log.Printf("http: rx: duration: %s", time.Since(start))
 	}
 }
