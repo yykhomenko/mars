@@ -3,21 +3,19 @@ package router
 import (
 	"log"
 
-	"github.com/fiorix/go-smpp/smpp"
+	"github.com/yykhomenko/mars/internal/entity"
 )
 
 type Router struct {
-	messages map[string][]*smpp.ShortMessage
+	messages map[string][]*entity.Message
 }
 
 func New() *Router {
-	messages := make(map[string][]*smpp.ShortMessage)
+	messages := make(map[string][]*entity.Message)
 	return &Router{messages: messages}
 }
 
-func (r *Router) Route(m *smpp.ShortMessage) {
-	r.messages[m.Src] = append(r.messages[m.Src], m)
+func (r *Router) Route(m *entity.Message) {
+	r.messages[m.From] = append(r.messages[m.From], m)
 	log.Printf("router: message routed: %v\n", m)
-	log.Printf("router: text: %s\n", m.Text.Decode())
-	log.Printf("router: messages to sent: %v\n", r.messages)
 }
