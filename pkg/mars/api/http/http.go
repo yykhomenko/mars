@@ -5,18 +5,19 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/yykhomenko/mars/pkg/mars/config"
 	"github.com/yykhomenko/mars/pkg/mars/entity"
 	"github.com/yykhomenko/mars/pkg/mars/service/router"
 )
 
 type HTTPServer struct {
-	addr   string
+	conf   *config.Config
 	router router.Router
 }
 
-func NewHTTPServer(addr string, router router.Router) *HTTPServer {
+func NewHTTPServer(conf *config.Config, router router.Router) *HTTPServer {
 	s := &HTTPServer{
-		addr:   addr,
+		conf:   conf,
 		router: router,
 	}
 
@@ -26,8 +27,8 @@ func NewHTTPServer(addr string, router router.Router) *HTTPServer {
 }
 
 func (s *HTTPServer) Start() error {
-	log.Println("HTTP server listen:", s.addr)
-	return http.ListenAndServe(s.addr, nil)
+	log.Println("HTTP server listen:", s.conf.MarsApiAddr)
+	return http.ListenAndServe(s.conf.MarsApiAddr, nil)
 }
 
 func (s *HTTPServer) messages(w http.ResponseWriter, r *http.Request) {

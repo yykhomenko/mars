@@ -1,19 +1,26 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/yykhomenko/mars/pkg/mars/api/http"
+	"github.com/yykhomenko/mars/pkg/mars/config"
+	"github.com/yykhomenko/mars/pkg/mars/service/hash"
 	"github.com/yykhomenko/mars/pkg/mars/service/router"
 )
 
 func main() {
 
-	//conf := config.NewConfig()
+	config := config.NewConfig()
+	fmt.Println(config)
 
 	router := router.NewRouter()
 	//
 	//smpp := smpp.NewSMPPConnector("localhost:3736", "user", "password", router)
 	//smpp.Start()
 
-	http := http.NewHTTPServer(":8080", router)
+	hash := hash.NewHashConnector(config)
+
+	http := http.NewHTTPServer(config, router)
 	http.Start()
 }

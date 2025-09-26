@@ -10,12 +10,19 @@ import (
 )
 
 type Config struct {
-	FtpAddr    string `env:"MARS_SFTP_ADDR" envDefault:"localhost:2222"`
-	FtpUser    string `env:"MARS_SFTP_USER" envDefault:"mars"`
-	FtpPass    string `env:"MARS_SFTP_PASS" envDefault:"test"`
-	KafkaAddr  string `env:"MARS_QUEUE_ADDR" envDefault:"localhost:9093"`
-	KafkaTopic string `env:"MARS_QUEUE_TOPIC" envDefault:"mars_topic"`
-	Log        *logrus.Logger
+	MarsApiAddr   string `env:"MARS_API_ADDR" envDefault:":8080"`
+	HashApiAddr   string `env:"HASH_API_ADDR" envDefault:"localhost:8082"`
+	HashApiUser   string `env:"HASH_API_USER" envDefault:"mars"`
+	HashApiPass   string `env:"HASH_API_PASS" envDefault:"test"`
+	SmsCenterAddr string `env:"SMS_CENTER_ADDR" envDefault:"localhost:8082"`
+	SmsCenterUser string `env:"SMS_CENTER_USER" envDefault:"mars"`
+	SmsCenterPass string `env:"SMS_CENTER_PASS" envDefault:"test"`
+	FtpAddr       string `env:"MARS_SFTP_ADDR" envDefault:"localhost:2222"`
+	FtpUser       string `env:"MARS_SFTP_USER" envDefault:"mars"`
+	FtpPass       string `env:"MARS_SFTP_PASS" envDefault:"test"`
+	KafkaAddr     string `env:"MARS_QUEUE_ADDR" envDefault:"localhost:9093"`
+	KafkaTopic    string `env:"MARS_QUEUE_TOPIC" envDefault:"mars_topic"`
+	Log           *logrus.Logger
 }
 
 func NewConfig() *Config {
