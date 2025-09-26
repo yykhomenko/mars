@@ -5,3 +5,5 @@
 /conf/dhparam.pem
 /conf/private.key
 /conf/public.crt
+/.env.sh
+/.env

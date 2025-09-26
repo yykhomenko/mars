@@ -20,6 +20,6 @@ func NewRouter() Router {
 }
 
 func (r *router) Route(m *entity.Message) {
-	r.messages[m.From] = append(r.messages[m.From], m)
+	//r.messages[m.From] = append(r.messages[m.From], m)
 	log.Printf("router: message routed: %v\n", m)
 }
