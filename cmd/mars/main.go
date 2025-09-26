@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/yykhomenko/mars/internal/api/http"
-	"github.com/yykhomenko/mars/internal/service/router"
-	"github.com/yykhomenko/mars/internal/service/smpp"
+	"github.com/yykhomenko/mars/pkg/mars/api/http"
+	"github.com/yykhomenko/mars/pkg/mars/service/router"
+	"github.com/yykhomenko/mars/pkg/mars/service/smpp"
 )
 
 func main() {

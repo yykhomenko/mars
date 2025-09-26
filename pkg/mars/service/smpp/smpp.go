@@ -9,8 +9,8 @@ import (
 	"github.com/fiorix/go-smpp/smpp/pdu"
 	"github.com/fiorix/go-smpp/smpp/pdu/pdufield"
 
-	"github.com/yykhomenko/mars/internal/entity"
-	"github.com/yykhomenko/mars/internal/service/router"
+	"github.com/yykhomenko/mars/pkg/mars/entity"
+	"github.com/yykhomenko/mars/pkg/mars/service/router"
 )
 
 type SMPPConnector struct {

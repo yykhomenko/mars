@@ -3,7 +3,7 @@ package router
 import (
 	"log"
 
-	"github.com/yykhomenko/mars/internal/entity"
+	"github.com/yykhomenko/mars/pkg/mars/entity"
 )
 
 type Router interface {

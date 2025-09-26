@@ -1,4 +1,3 @@
-// curl "http://localhost:8080/messages?from=777&to=380671234567&text=Hello"
 package http
 
 import (
@@ -6,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/yykhomenko/mars/internal/entity"
-	"github.com/yykhomenko/mars/internal/service/router"
+	"github.com/yykhomenko/mars/pkg/mars/entity"
+	"github.com/yykhomenko/mars/pkg/mars/service/router"
 )
 
 type HTTPServer struct {

@@ -54,6 +54,15 @@ status: ## Print containers status
 log: ## Print log
 	docker compose logs -f
 
+send:
+	curl -v \
+	-H "Content-Type: application/json" \
+	-d '{"from": "123", "to": "456", "text":"789"}' \
+	-X POST http://localhost:8080/messages
+
+send2:
+	curl "http://localhost:8080/messages?from=777&to=380671234567&text=Hello"
+
 help:
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / \
   {printf "\033[36m%-16s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
