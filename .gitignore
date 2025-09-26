@@ -2,3 +2,6 @@
 .vscode/
 .DS_Store
 /mars
+/conf/dhparam.pem
+/conf/private.key
+/conf/public.crt
