@@ -19,7 +19,13 @@ func main() {
 	//smpp := smpp.NewSMPPConnector("localhost:3736", "user", "password", router)
 	//smpp.Start()
 
-	hash := hash.NewHashConnector(config)
+	hashConnector := hash.NewHashConnector(config)
+	hash, err := hashConnector.GetHash("380670000001")
+	if err != nil {
+		config.Log.Println(err.Error())
+	}
+
+	config.Log.Println(">>>" + hash)
 
 	http := http.NewHTTPServer(config, router)
 	http.Start()

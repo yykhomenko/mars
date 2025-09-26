@@ -1,6 +1,7 @@
 package hash
 
 import (
+	"errors"
 	"time"
 
 	"github.com/valyala/fasthttp"
@@ -19,9 +20,10 @@ func NewHashConnector(config *config.Config) *HashConnector {
 	}
 }
 
-func (h *HashConnector) getHash(msisdn string) string {
+func (h *HashConnector) GetHash(msisdn string) (string, error) {
 	req := fasthttp.AcquireRequest()
-	req.SetRequestURI(h.config.HashApiAddr + "/hash/" + msisdn)
+	req.SetRequestURI(h.config.HashApiAddr + "/hashes/" + msisdn)
+	h.config.Log.Println(string(req.RequestURI()))
 	resp := fasthttp.AcquireResponse()
 	err := h.client.Do(req, resp)
 
@@ -33,14 +35,16 @@ func (h *HashConnector) getHash(msisdn string) string {
 		if code >= 200 && code <= 399 {
 
 			h.config.Log.Println("OK", msisdn)
+			return string(resp.Body()), nil
 		} else {
 			h.config.Log.Println("ERROR", msisdn)
+			return string(resp.Body()), errors.New("hash connector fail")
 		}
 	} else {
 		h.config.Log.Printf("ERR Connection error: %v\n", err)
+		return string(resp.Body()), errors.New("hash connector fail")
 	}
 
-	return string(resp.Body())
 }
 
 func getClient(conf *config.Config) *fasthttp.Client {

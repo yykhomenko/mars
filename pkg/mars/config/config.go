@@ -11,7 +11,7 @@ import (
 
 type Config struct {
 	MarsApiAddr   string `env:"MARS_API_ADDR" envDefault:":8080"`
-	HashApiAddr   string `env:"HASH_API_ADDR" envDefault:"localhost:8082"`
+	HashApiAddr   string `env:"HASH_API_ADDR" envDefault:"http://localhost:8082"`
 	HashApiUser   string `env:"HASH_API_USER" envDefault:"mars"`
 	HashApiPass   string `env:"HASH_API_PASS" envDefault:"test"`
 	SmsCenterAddr string `env:"SMS_CENTER_ADDR" envDefault:"localhost:8082"`
