@@ -1,8 +1,7 @@
 package router
 
 import (
-	"log"
-
+	"github.com/yykhomenko/mars/pkg/mars/config"
 	"github.com/yykhomenko/mars/pkg/mars/entity"
 )
 
@@ -11,15 +10,16 @@ type Router interface {
 }
 
 type router struct {
+	config   *config.Config
 	messages map[string][]*entity.Message
 }
 
-func NewRouter() Router {
+func NewRouter(config *config.Config) Router {
 	messages := make(map[string][]*entity.Message)
-	return &router{messages: messages}
+	return &router{config: config, messages: messages}
 }
 
 func (r *router) Route(m *entity.Message) {
 	//r.messages[m.From] = append(r.messages[m.From], m)
-	log.Printf("router: message routed: %v\n", m)
+	r.config.Log.Printf("router: message routed: %v\n", m)
 }

@@ -14,7 +14,7 @@ func main() {
 	config := config.NewConfig()
 	fmt.Println(config)
 
-	router := router.NewRouter()
+	router := router.NewRouter(config)
 	//
 	//smpp := smpp.NewSMPPConnector("localhost:3736", "user", "password", router)
 	//smpp.Start()
@@ -27,6 +27,6 @@ func main() {
 
 	config.Log.Println(">>>" + hash)
 
-	http := http.NewHTTPServer(config, router)
+	http := http.NewHTTPServer(config, hashConnector, router)
 	http.Start()
 }
