@@ -7,3 +7,4 @@
 /conf/public.crt
 /.env.sh
 /.env
+/log/mars.log
