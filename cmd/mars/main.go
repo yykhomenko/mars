@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/yykhomenko/mars/pkg/mars/api/http"
 	"github.com/yykhomenko/mars/pkg/mars/config"
 	"github.com/yykhomenko/mars/pkg/mars/service/hash"
@@ -12,7 +10,7 @@ import (
 func main() {
 
 	config := config.NewConfig()
-	fmt.Println(config)
+	//fmt.Println(config)
 
 	router := router.NewRouter(config)
 	//
@@ -20,12 +18,6 @@ func main() {
 	//smpp.Start()
 
 	hashConnector := hash.NewHashConnector(config)
-	hash, err := hashConnector.GetHash("380670000001")
-	if err != nil {
-		config.Log.Println(err.Error())
-	}
-
-	config.Log.Println(">>>" + hash)
 
 	http := http.NewHTTPServer(config, hashConnector, router)
 	http.Start()

@@ -34,18 +34,19 @@ func NewHTTPServer(conf *config.Config, hashConnector *hash.HashConnector, route
 			Text: text,
 		}
 
-		conf.Log.Println("1", message)
+		conf.Log.Println("http: message: ", message)
 
-		hash, err := hashConnector.GetHash(message.To)
+		hashResp, err := hashConnector.GetHash(message.To)
 		if err != nil {
-			return
+			conf.Log.Warn("hash: response err:", err.Error())
 		}
 
-		conf.Log.Println("2", hash)
+		conf.Log.Println("hash: response: ", hashResp)
+		message.To = hashResp.Value
 
 		s.router.Route(message)
 
-		conf.Log.Printf("http: rx: duration: %s", time.Since(start))
+		conf.Log.Printf("http duration: %s", time.Since(start))
 	})
 
 	return s

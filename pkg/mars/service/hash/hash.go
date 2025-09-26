@@ -1,6 +1,7 @@
 package hash
 
 import (
+	"encoding/json"
 	"errors"
 	"time"
 
@@ -13,6 +14,12 @@ type HashConnector struct {
 	client *fasthttp.Client
 }
 
+type HashResponse struct {
+	Value    string `json:"value,omitempty"`
+	ErrorID  byte   `json:"error_id,omitempty"`
+	ErrorMsg string `json:"error_msg,omitempty"`
+}
+
 func NewHashConnector(config *config.Config) *HashConnector {
 	return &HashConnector{
 		config: config,
@@ -20,29 +27,38 @@ func NewHashConnector(config *config.Config) *HashConnector {
 	}
 }
 
-func (h *HashConnector) GetHash(msisdn string) (string, error) {
+func (h *HashConnector) GetHash(msisdn string) (*HashResponse, error) {
 	req := fasthttp.AcquireRequest()
 	req.SetRequestURI(h.config.HashApiAddr + "/hashes/" + msisdn)
-	h.config.Log.Println(string(req.RequestURI()))
+	//h.config.Log.Println(string(req.RequestURI()))
 	resp := fasthttp.AcquireResponse()
 	err := h.client.Do(req, resp)
 
 	fasthttp.ReleaseRequest(req)
 	code := resp.StatusCode()
-	fasthttp.ReleaseResponse(resp)
 
 	if err == nil {
+
+		var hr HashResponse
+		err1 := json.Unmarshal(resp.Body(), &hr)
+		if err1 != nil {
+			h.config.Log.Printf("hash: body parse error: %v\n", err1)
+		}
+
 		if code >= 200 && code <= 399 {
 
-			h.config.Log.Println("OK", msisdn)
-			return string(resp.Body()), nil
+			h.config.Log.Println("hash: OK", msisdn)
+			fasthttp.ReleaseResponse(resp)
+			return &hr, nil
 		} else {
-			h.config.Log.Println("ERROR", msisdn)
-			return string(resp.Body()), errors.New("hash connector fail")
+			h.config.Log.Println("hash: ERROR", msisdn)
+			fasthttp.ReleaseResponse(resp)
+			return &hr, errors.New("hash: hash connector fail")
 		}
 	} else {
-		h.config.Log.Printf("ERR Connection error: %v\n", err)
-		return string(resp.Body()), errors.New("hash connector fail")
+		h.config.Log.Printf("hash: ERR Connection error: %v\n", err)
+		fasthttp.ReleaseResponse(resp)
+		return nil, errors.New("hash: hash connector fail")
 	}
 
 }
