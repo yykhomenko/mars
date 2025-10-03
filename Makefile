@@ -17,6 +17,9 @@ lint: ## Run linters
     --enable=structcheck --enable=maligned --enable=errcheck --enable=dupl --enable=ineffassign \
     --enable=interfacer --enable=unconvert --enable=goconst --enable=gosec --enable=megacheck
 
+run:
+	go run ./...
+
 test:	## Run tests
 	go test -race -timeout 30s ./...
 
@@ -62,6 +65,12 @@ send:
 
 send2:
 	curl "http://localhost:8080/messages?from=777&to=380671234567&text=Hello"
+
+bench:
+	~/src/go/wrkb/wrkb mars http://localhost:8080/messages?from=777&to=380671234567&text=Hello
+
+bench_hash:
+	~/src/go/wrkb/wrkb hashes http://127.0.0.1:8082/hashes/__RANDI64_380670000001_380679999999__
 
 help:
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / \

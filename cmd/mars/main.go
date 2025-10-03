@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/yykhomenko/mars/pkg/mars/api/http"
 	"github.com/yykhomenko/mars/pkg/mars/config"
 	"github.com/yykhomenko/mars/pkg/mars/service/hash"
@@ -20,5 +23,17 @@ func main() {
 	hashConnector := hash.NewHashConnector(config)
 
 	http := http.NewHTTPServer(config, hashConnector, router)
+
+	prevNum := router.GetNum()
+	go func() {
+		for range time.Tick(1 * time.Second) {
+			currentNum := router.GetNum()
+			if prevNum != currentNum {
+				fmt.Printf("%d tps\n", currentNum-prevNum)
+			}
+			prevNum = currentNum
+		}
+	}()
+
 	http.Start()
 }

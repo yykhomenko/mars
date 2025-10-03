@@ -47,7 +47,7 @@ func (h *HashConnector) GetHash(msisdn string) (*HashResponse, error) {
 
 		if code >= 200 && code <= 399 {
 
-			h.config.Log.Println("hash: OK", msisdn)
+			//h.config.Log.Println("hash: OK", msisdn)
 			fasthttp.ReleaseResponse(resp)
 			return &hr, nil
 		} else {
@@ -73,7 +73,7 @@ func getClient(conf *config.Config) *fasthttp.Client {
 		DisablePathNormalizing:        true,
 		Dial: (&fasthttp.TCPDialer{
 			//Concurrency:      param.ConnNum,
-			Concurrency:      1,
+			Concurrency:      10,
 			DNSCacheDuration: 1 * time.Hour,
 		}).Dial,
 	}
