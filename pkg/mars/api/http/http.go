@@ -9,6 +9,7 @@ import (
 	"github.com/yykhomenko/mars/pkg/mars/entity"
 	"github.com/yykhomenko/mars/pkg/mars/service/hash"
 	"github.com/yykhomenko/mars/pkg/mars/service/router"
+	"github.com/yykhomenko/mars/pkg/mars/service/sis"
 )
 
 type HTTPServer struct {
@@ -17,7 +18,7 @@ type HTTPServer struct {
 	router router.Router
 }
 
-func NewHTTPServer(conf *config.Config, hashConnector *hash.HashConnector, router router.Router) *HTTPServer {
+func NewHTTPServer(conf *config.Config, hashConnector *hash.HashConnector, sisConnector *sis.SisConnector, router router.Router) *HTTPServer {
 
 	rand.Seed(time.Now().Unix())
 	app := fiber.New()
@@ -46,10 +47,17 @@ func NewHTTPServer(conf *config.Config, hashConnector *hash.HashConnector, route
 
 		hashResp, err := hashConnector.GetHash(message.To)
 		if err != nil {
-			//conf.Log.Warn("hash: response err:", err.Error())
+			conf.Log.Warn("hash: response err:", err.Error())
 		}
-
 		//conf.Log.Println("hash: response: ", hashResp)
+
+		sisResp, err := sisConnector.GetSubscriber(message.To)
+		if err != nil {
+			conf.Log.Warn("sis: response err:", err.Error())
+		}
+		//conf.Log.Println("sis: response: ", sisResp)
+
+		message.SisType = sisResp.BillingType
 		message.To = hashResp.Value
 
 		s.router.Route(message)

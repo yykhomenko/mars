@@ -8,6 +8,7 @@ import (
 	"github.com/yykhomenko/mars/pkg/mars/config"
 	"github.com/yykhomenko/mars/pkg/mars/service/hash"
 	"github.com/yykhomenko/mars/pkg/mars/service/router"
+	"github.com/yykhomenko/mars/pkg/mars/service/sis"
 )
 
 func main() {
@@ -21,8 +22,9 @@ func main() {
 	//smpp.Start()
 
 	hashConnector := hash.NewHashConnector(config)
+	sisConnector := sis.NewSisConnector(config)
 
-	http := http.NewHTTPServer(config, hashConnector, router)
+	http := http.NewHTTPServer(config, hashConnector, sisConnector, router)
 
 	prevNum := router.GetNum()
 	go func() {
@@ -31,6 +33,9 @@ func main() {
 			if prevNum != currentNum {
 				fmt.Printf("%d tps\n", currentNum-prevNum)
 			}
+
+			//fmt.Println(sisConnector.GetSubscriber("380670000001"))
+
 			prevNum = currentNum
 		}
 	}()

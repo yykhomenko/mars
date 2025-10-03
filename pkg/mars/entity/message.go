@@ -1,7 +1,8 @@
 package entity
 
 type Message struct {
-	From string
-	To   string
-	Text string
+	From    string
+	To      string
+	Text    string
+	SisType int8
 }

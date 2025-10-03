@@ -14,6 +14,9 @@ type Config struct {
 	HashApiAddr   string `env:"HASH_API_ADDR" envDefault:"http://localhost:8082"`
 	HashApiUser   string `env:"HASH_API_USER" envDefault:"mars"`
 	HashApiPass   string `env:"HASH_API_PASS" envDefault:"test"`
+	SisApiAddr    string `env:"SIS_API_ADDR" envDefault:"http://localhost:9001"`
+	SisApiUser    string `env:"SIS_API_USER" envDefault:"mars"`
+	SisApiPass    string `env:"SIS_API_PASS" envDefault:"test"`
 	SmsCenterAddr string `env:"SMS_CENTER_ADDR" envDefault:"localhost:8082"`
 	SmsCenterUser string `env:"SMS_CENTER_USER" envDefault:"mars"`
 	SmsCenterPass string `env:"SMS_CENTER_PASS" envDefault:"test"`
