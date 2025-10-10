@@ -67,7 +67,7 @@ test_mars:
 	curl "http://localhost:8080/messages?from=777&to=380670000001&text=Hello"
 
 bench_mars:
-	~/src/go/wrkb/wrkb mars http://localhost:8080/messages?from=777&to=380670000001&text=Hello
+	~/src/go/wrkb/wrkb mars http://localhost:8080/messages\?from\=__RANDI64_700_777__\&to\=__RANDI64_380670000001_380670099999__\&text\=__RANDSTR_lettersdigits_16__
 
 bench_hash:
 	~/src/go/wrkb/wrkb hashes http://127.0.0.1:8082/hashes/__RANDI64_380670000001_380679999999__
@@ -76,7 +76,7 @@ test_sis:
 	curl http://localhost:9001/subscribers/380670000001
 
 bench_sis:
-	~/src/go/wrkb/wrkb sis http://127.0.0.1:9001/subscribers/__RANDI64_380670000001_380670099999__
+	~/src/go/wrkb/wrkb sis http://127.0.0.1:9001/subscribers/__RANDI64_380670000001_380679999999__
 
 help:
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / \

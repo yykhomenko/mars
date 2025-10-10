@@ -49,14 +49,14 @@ func NewHTTPServer(conf *config.Config, hashConnector *hash.HashConnector, sisCo
 		if err != nil {
 			conf.Log.Warn("hash: response err:", err.Error())
 		}
-		//conf.Log.Println("hash: response: ", hashResp)
-
+		////conf.Log.Println("hash: response: ", hashResp)
+		//
 		sisResp, err := sisConnector.GetSubscriber(message.To)
 		if err != nil {
 			conf.Log.Warn("sis: response err:", err.Error())
 		}
-		//conf.Log.Println("sis: response: ", sisResp)
-
+		////conf.Log.Println("sis: response: ", sisResp)
+		//
 		message.SisType = sisResp.BillingType
 		message.To = hashResp.Value
 
@@ -67,39 +67,11 @@ func NewHTTPServer(conf *config.Config, hashConnector *hash.HashConnector, sisCo
 		return nil
 	})
 
-	//http.HandleFunc("/messages", func(w http.ResponseWriter, r *http.Request) {
-	//	//start := time.Now()
-	//	r.ParseForm()
-	//	from := r.FormValue("from")
-	//	to := r.FormValue("to")
-	//	text := r.FormValue("text")
-	//
-	//	message := &entity.Message{
-	//		From: from,
-	//		To:   to,
-	//		Text: text,
-	//	}
-	//
-	//	//conf.Log.Println("http: message: ", message)
-	//
-	//	hashResp, err := hashConnector.GetHash(message.To)
-	//	if err != nil {
-	//		//conf.Log.Warn("hash: response err:", err.Error())
-	//	}
-	//
-	//	//conf.Log.Println("hash: response: ", hashResp)
-	//	message.To = hashResp.Value
-	//
-	//	s.router.Route(message)
-	//
-	//	//conf.Log.Printf("http duration: %s", time.Since(start))
-	//})
-
 	return s
 }
 
 func (s *HTTPServer) Start() error {
-	s.conf.Log.Println("HTTP server listen:", s.conf.MarsApiAddr)
+	//s.conf.Log.Println("HTTP server listen:", s.conf.MarsApiAddr)
 	//return http.ListenAndServe(s.conf.MarsApiAddr, nil)
 	return s.server.Listen(s.conf.MarsApiAddr)
 }

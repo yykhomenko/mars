@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/yykhomenko/mars/pkg/mars/api/http"
 	"github.com/yykhomenko/mars/pkg/mars/config"
 	"github.com/yykhomenko/mars/pkg/mars/service/hash"
@@ -11,19 +12,21 @@ import (
 	"github.com/yykhomenko/mars/pkg/mars/service/sis"
 )
 
+type application struct {
+	config        *config.Config
+	log           *logrus.Logger
+	hashConnector *hash.HashConnector
+	sisConnector  *sis.SisConnector
+	router        *router.Router
+	httpServer    *http.HTTPServer
+}
+
 func main() {
 
 	config := config.NewConfig()
-	//fmt.Println(config)
-
-	router := router.NewRouter(config)
-	//
-	//smpp := smpp.NewSMPPConnector("localhost:3736", "user", "password", router)
-	//smpp.Start()
-
 	hashConnector := hash.NewHashConnector(config)
 	sisConnector := sis.NewSisConnector(config)
-
+	router := router.NewRouter(config)
 	http := http.NewHTTPServer(config, hashConnector, sisConnector, router)
 
 	prevNum := router.GetNum()
@@ -33,12 +36,13 @@ func main() {
 			if prevNum != currentNum {
 				fmt.Printf("%d tps\n", currentNum-prevNum)
 			}
-
-			//fmt.Println(sisConnector.GetSubscriber("380670000001"))
-
 			prevNum = currentNum
 		}
 	}()
 
 	http.Start()
 }
+
+//
+//smpp := smpp.NewSMPPConnector("localhost:3736", "user", "password", router)
+//smpp.Start()

@@ -73,7 +73,7 @@ func getClient(conf *config.Config) *fasthttp.Client {
 		DisablePathNormalizing:        true,
 		Dial: (&fasthttp.TCPDialer{
 			//Concurrency:      param.ConnNum,
-			Concurrency:      10,
+			Concurrency:      8,
 			DNSCacheDuration: 1 * time.Hour,
 		}).Dial,
 	}
