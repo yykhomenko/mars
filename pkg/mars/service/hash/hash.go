@@ -3,6 +3,7 @@ package hash
 import (
 	"encoding/json"
 	"errors"
+	"regexp"
 	"time"
 
 	"github.com/valyala/fasthttp"
@@ -28,8 +29,16 @@ func NewHashConnector(config *config.Config) *HashConnector {
 }
 
 func (h *HashConnector) GetHash(msisdn string) (*HashResponse, error) {
+	return h.Get(h.config.HashApiAddr + "/hashes/" + msisdn)
+}
+
+func (h *HashConnector) GetMSISDN(hashedMSISDN string) (*HashResponse, error) {
+	return h.Get(h.config.HashApiAddr + "/msisdns/" + hashedMSISDN)
+}
+
+func (h *HashConnector) Get(requestURI string) (*HashResponse, error) {
 	req := fasthttp.AcquireRequest()
-	req.SetRequestURI(h.config.HashApiAddr + "/hashes/" + msisdn)
+	req.SetRequestURI(requestURI)
 	//h.config.Log.Println(string(req.RequestURI()))
 	resp := fasthttp.AcquireResponse()
 	err := h.client.Do(req, resp)
@@ -47,11 +56,11 @@ func (h *HashConnector) GetHash(msisdn string) (*HashResponse, error) {
 
 		if code >= 200 && code <= 399 {
 
-			//h.config.Log.Println("hash: OK", msisdn)
+			//h.config.Log.Println("hash: OK", requestURI)
 			fasthttp.ReleaseResponse(resp)
 			return &hr, nil
 		} else {
-			h.config.Log.Println("hash: ERROR", msisdn)
+			h.config.Log.Println("hash: ERROR", requestURI)
 			fasthttp.ReleaseResponse(resp)
 			return &hr, errors.New("hash: hash connector fail")
 		}
@@ -61,6 +70,12 @@ func (h *HashConnector) GetHash(msisdn string) (*HashResponse, error) {
 		return nil, errors.New("hash: hash connector fail")
 	}
 
+}
+
+var hashRegexp = regexp.MustCompile(`^[a-fA-F0-9]{32}$`)
+
+func IsHashed(s string) bool {
+	return hashRegexp.MatchString(s)
 }
 
 func getClient(conf *config.Config) *fasthttp.Client {

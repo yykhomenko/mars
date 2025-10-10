@@ -64,10 +64,13 @@ send:
 	-X POST http://localhost:8080/messages
 
 test_mars:
-	curl "http://localhost:8080/messages?from=777&to=380670000001&text=Hello"
+	curl "http://localhost:8080/messages?from=777&to=b84b5eefc86a17e9ea0a503f02186e41&text=Hello"
 
-bench_mars:
+bench_mars_msisdns:
 	~/src/go/wrkb/wrkb mars http://localhost:8080/messages\?from\=__RANDI64_700_777__\&to\=__RANDI64_380670000001_380670099999__\&text\=__RANDSTR_lettersdigits_16__
+
+bench_mars_hashed:
+	~/src/go/wrkb/wrkb mars http://localhost:8080/messages\?from\=__RANDI64_700_777__\&to\=b84b5eefc86a17e9ea0a503f02186e41\&text\=__RANDSTR_lettersdigits_16__
 
 bench_hash:
 	~/src/go/wrkb/wrkb hashes http://127.0.0.1:8082/hashes/__RANDI64_380670000001_380679999999__

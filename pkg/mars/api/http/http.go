@@ -45,10 +45,14 @@ func NewHTTPServer(conf *config.Config, hashConnector *hash.HashConnector, sisCo
 
 		//conf.Log.Println("http: message: ", message)
 
-		hashResp, err := hashConnector.GetHash(message.To)
-		if err != nil {
-			conf.Log.Warn("hash: response err:", err.Error())
+		if hash.IsHashed(message.To) {
+			hashResp, err := hashConnector.GetMSISDN(message.To)
+			if err != nil {
+				conf.Log.Warn("hash: response err:", err.Error())
+			}
+			message.To = hashResp.Value
 		}
+
 		////conf.Log.Println("hash: response: ", hashResp)
 		//
 		sisResp, err := sisConnector.GetSubscriber(message.To)
@@ -58,7 +62,6 @@ func NewHTTPServer(conf *config.Config, hashConnector *hash.HashConnector, sisCo
 		////conf.Log.Println("sis: response: ", sisResp)
 		//
 		message.SisType = sisResp.BillingType
-		message.To = hashResp.Value
 
 		s.router.Route(message)
 
