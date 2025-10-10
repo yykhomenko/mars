@@ -1,6 +1,7 @@
 package smpp
 
 import (
+	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -8,6 +9,7 @@ import (
 	"github.com/fiorix/go-smpp/smpp"
 	"github.com/fiorix/go-smpp/smpp/pdu"
 	"github.com/fiorix/go-smpp/smpp/pdu/pdufield"
+	"github.com/fiorix/go-smpp/smpp/pdu/pdutext"
 
 	"github.com/yykhomenko/mars/pkg/mars/entity"
 	"github.com/yykhomenko/mars/pkg/mars/service/router"
@@ -21,10 +23,11 @@ type SMPPConnector struct {
 func NewSMPPConnector(addr, user, password string, router router.Router) *SMPPConnector {
 	return &SMPPConnector{
 		tx: &smpp.Transceiver{
-			Addr:    addr,
-			User:    user,
-			Passwd:  password,
-			Handler: receiverHandler(router),
+			Addr:        addr,
+			User:        user,
+			Passwd:      password,
+			Handler:     receiverHandler(router),
+			RespTimeout: 5 * time.Second,
 		},
 		router: router,
 	}
@@ -86,4 +89,35 @@ func parseTLVStatus(text string) map[string]string {
 	}
 
 	return m
+}
+
+func (c *SMPPConnector) Send(msg *entity.Message) (*smpp.ShortMessage, error) {
+	if c.tx == nil {
+		return nil, fmt.Errorf("smpp: transceiver not connected")
+	}
+
+	var enc = "latin1"
+	var codec pdutext.Codec
+	switch enc {
+	case "ucs2", "ucs-2":
+		codec = pdutext.UCS2(msg.Text)
+	case "latin1", "latin-1":
+		codec = pdutext.Latin1(msg.Text)
+	default:
+		codec = pdutext.Raw(msg.Text)
+	}
+
+	sm := &smpp.ShortMessage{
+		Src:      msg.From,
+		Dst:      msg.To,
+		Text:     codec,
+		Register: pdufield.NoDeliveryReceipt,
+	}
+
+	resp, err := c.tx.Submit(sm)
+	if err != nil {
+		return nil, fmt.Errorf("smpp: submit: %w", err)
+	}
+
+	return resp, nil
 }

@@ -5,11 +5,12 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/yykhomenko/mars/pkg/mars/api/http"
+	"github.com/yykhomenko/mars/pkg/mars"
 	"github.com/yykhomenko/mars/pkg/mars/config"
 	"github.com/yykhomenko/mars/pkg/mars/service/hash"
 	"github.com/yykhomenko/mars/pkg/mars/service/router"
 	"github.com/yykhomenko/mars/pkg/mars/service/sis"
+	"github.com/yykhomenko/mars/pkg/mars/service/smpp"
 )
 
 type application struct {
@@ -18,16 +19,22 @@ type application struct {
 	hashConnector *hash.HashConnector
 	sisConnector  *sis.SisConnector
 	router        *router.Router
-	httpServer    *http.HTTPServer
+	httpServer    *mars.HTTPServer
 }
 
 func main() {
 
 	config := config.NewConfig()
+
 	hashConnector := hash.NewHashConnector(config)
 	sisConnector := sis.NewSisConnector(config)
+
 	router := router.NewRouter(config)
-	http := http.NewHTTPServer(config, hashConnector, sisConnector, router)
+
+	smppConnector := smpp.NewSMPPConnector("localhost:3736", "user", "password", router)
+	smppConnector.Start()
+
+	http := mars.NewHTTPServer(config, hashConnector, sisConnector, smppConnector, router)
 
 	prevNum := router.GetNum()
 	go func() {
@@ -42,7 +49,3 @@ func main() {
 
 	http.Start()
 }
-
-//
-//smpp := smpp.NewSMPPConnector("localhost:3736", "user", "password", router)
-//smpp.Start()

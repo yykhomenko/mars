@@ -1,4 +1,4 @@
-package http
+package mars
 
 import (
 	"math/rand"
@@ -10,6 +10,7 @@ import (
 	"github.com/yykhomenko/mars/pkg/mars/service/hash"
 	"github.com/yykhomenko/mars/pkg/mars/service/router"
 	"github.com/yykhomenko/mars/pkg/mars/service/sis"
+	"github.com/yykhomenko/mars/pkg/mars/service/smpp"
 )
 
 type HTTPServer struct {
@@ -18,7 +19,7 @@ type HTTPServer struct {
 	router router.Router
 }
 
-func NewHTTPServer(conf *config.Config, hashConnector *hash.HashConnector, sisConnector *sis.SisConnector, router router.Router) *HTTPServer {
+func NewHTTPServer(conf *config.Config, hashConnector *hash.HashConnector, sisConnector *sis.SisConnector, smppConnector *smpp.SMPPConnector, router router.Router) *HTTPServer {
 
 	rand.Seed(time.Now().Unix())
 	app := fiber.New()
@@ -62,6 +63,16 @@ func NewHTTPServer(conf *config.Config, hashConnector *hash.HashConnector, sisCo
 		////conf.Log.Println("sis: response: ", sisResp)
 		//
 		message.SisType = sisResp.BillingType
+
+		_, err = smppConnector.Send(message)
+		if err != nil {
+			conf.Log.Warn("smpp: response err:", err.Error())
+		}
+
+		//smppResp.RespID()
+
+		//conf.Log.Printf("smpp: response: %+v", smppResp)
+		//conf.Log.Printf("smpp: response: RespID: %s", smppResp.RespID())
 
 		s.router.Route(message)
 
