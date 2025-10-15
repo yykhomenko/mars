@@ -34,7 +34,7 @@ func main() {
 	smppConnector := smpp.NewSMPPConnector("localhost:3736", "user", "password", router)
 	smppConnector.Start()
 
-	http := mars.NewHTTPServer(config, hashConnector, sisConnector, smppConnector, router)
+	httpServer := mars.NewHTTPServer(config, hashConnector, sisConnector, smppConnector, router)
 
 	prevNum := router.GetNum()
 	go func() {
@@ -47,5 +47,5 @@ func main() {
 		}
 	}()
 
-	http.Start()
+	httpServer.Start()
 }
